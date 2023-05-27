@@ -16,7 +16,9 @@ func GlobDirectory(pattern string) ([]string, error) {
 	}
 	var matches []string
 	reg := getPattern(pattern)
-	err := filepath.Walk(".", func(path string, info os.FileInfo, err error) error {
+	index := strings.Index(pattern, "**")
+	root := pattern[:index]
+	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if info == nil {
 			err := errors.Errorf("dir:%s filepath.Walk info is nil", ".")
 			return err
