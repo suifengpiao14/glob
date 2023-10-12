@@ -2,33 +2,14 @@ package glob
 
 import (
 	"io/fs"
-	"os"
-	"path/filepath"
 	"regexp"
 	"strings"
 
-	"github.com/pkg/errors"
+	"github.com/yargevad/filepathx"
 )
 
 func GlobDirectory(pattern string) ([]string, error) {
-	if !strings.Contains(pattern, "**") {
-		return filepath.Glob(pattern)
-	}
-	var matches []string
-	reg := getPattern(pattern)
-	err := filepath.Walk(".", func(path string, info os.FileInfo, err error) error {
-		if info == nil {
-			err := errors.Errorf("dir:%s filepath.Walk info is nil", ".")
-			return err
-		}
-		if !info.IsDir() {
-			path = strings.ReplaceAll(path, "\\", "/")
-			if reg.MatchString(path) {
-				matches = append(matches, path)
-			}
-		}
-		return nil
-	})
+	matches, err := filepathx.Glob(pattern)
 	return matches, err
 }
 
@@ -51,7 +32,6 @@ func GlobFS(fsys fs.FS, pattern string) ([]string, error) {
 
 func getPattern(pattern string) *regexp.Regexp {
 	regStr := strings.TrimLeft(pattern, ".")
-	regStr = strings.ReplaceAll(regStr, ".", "\\.")
 	regStr = strings.ReplaceAll(regStr, "**", ".*")
 	reg := regexp.MustCompile(regStr)
 	return reg
