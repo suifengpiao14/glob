@@ -17,3 +17,10 @@ func TestGlobFS(t *testing.T) {
 	require.NoError(t, err)
 	fmt.Println(fileList)
 }
+
+func TestGlobURL(t *testing.T) {
+	u := "http://fsstorage.programmerfamily.com/advertise/design/**.md"
+	urls, err := GlobURL(u)
+	require.NoError(t, err)
+	fmt.Println(urls)
+}
